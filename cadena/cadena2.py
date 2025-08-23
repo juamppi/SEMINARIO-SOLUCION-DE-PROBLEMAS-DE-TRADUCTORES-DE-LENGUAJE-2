@@ -1,4 +1,4 @@
-valores = ["hola", "9", "9.8", "10", "mundito"]
+valores = ["hola", "9", "9.8", "10", "mundo"]
 
 for valor in valores:
     try:
