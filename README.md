@@ -1,25 +1,49 @@
-# SEMINARIO-SOLUCION-DE-PROBLEMAS-DE-TRADUCTORES-DE-LENGUAJE-2
+# Seminario - Solución de Problemas de Traductores de Lenguaje II
 
-Este repositorio contiene materiales y soluciones relacionadas con el seminario de solución de problemas de traductores de lenguaje II.
+Este repositorio contiene ejemplos y herramientas para el análisis léxico y sintáctico, así como una aplicación de checkpointing para un sistema de órdenes de restaurante.
 
-## Estructura del proyecto
+## Estructura del Proyecto
 
-- Ejercicios y ejemplos prácticos
-- Documentación y recursos de apoyo
-- Scripts y herramientas desarrolladas durante el seminario
+- **lib/**  
+  Contiene la aplicación web para checkpointing de órdenes en restaurante, desarrollada con Next.js y React.
 
-## Cómo usar este repositorio
+- **cadena/**  
+  Incluye ejemplos de manejo de cadenas y la implementación de un analizador sintáctico, con clases como pila, terminal, no terminal, estado, etc.
 
-1. Clona el repositorio en tu máquina local.
-2. Explora las carpetas y archivos para encontrar los recursos que necesitas.
-3. Sigue las instrucciones específicas en cada carpeta para ejecutar los ejemplos.
+- **analizador lexico/**  
+  Carpeta dedicada al desarrollo de un analizador léxico en Python, con ejemplos y pruebas.
 
-## Contribuciones
+## Uso
 
-Si deseas contribuir, por favor realiza un fork del repositorio y envía tus pull requests.
+### Analizador Léxico
 
-## Autor
+Ejecuta el lexer con:
 
-Juan Pablo
+```sh
+python analizador lexico/test_lexer.py
+```
+
+### Analizador Sintáctico
+
+Ejecuta el ejemplo de pila:
+
+```sh
+python cadena/Analizador sintactico/main.py
+```
+
+### Aplicación Restaurante
+
+Instala dependencias y ejecuta Next.js:
+
+```sh
+cd lib/checkpointing
+npm install
+npm run dev
+```
+
+## Créditos
+
+- Juan Pablo
+- Seminario Traductores de Lenguaje II
 
 ---
