@@ -1,0 +1,163 @@
+// app/page.tsx
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { LoginForm } from '../components/restaurant/login-form';
+import { CheckpointManager, CheckpointData, OrderItem } from '../lib/checkpointing';
+import { Button } from '../components/ui/button';
+
+export default function RestaurantApp() {
+  const [currentWorker, setCurrentWorker] = useState<string>('');
+  const [selectedTable, setSelectedTable] = useState<string>('');
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [showPendingOrders, setShowPendingOrders] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState<CheckpointData[]>([]);
+  
+  // Auto-guardado cada 10 segundos
+  useEffect(() => {
+    if (currentWorker && selectedTable && orderItems.length > 0) {
+      const interval = setInterval(() => {
+        const checkpointData: CheckpointData = {
+          workerId: currentWorker,
+          tableId: selectedTable,
+          items: orderItems,
+          timestamp: Date.now(),
+          status: 'in-progress'
+        };
+        
+        CheckpointManager.saveCheckpoint(checkpointData);
+        console.log('[v0] Checkpoint guardado automáticamente');
+      }, 10000); // 10 segundos
+      
+      return () => clearInterval(interval);
+    }
+  }, [currentWorker, selectedTable, orderItems]);
+  
+  // Cargar checkpoint al seleccionar mesa
+  useEffect(() => {
+    if (currentWorker && selectedTable) {
+      const checkpoint = CheckpointManager.getCheckpoint(currentWorker, selectedTable);
+      if (checkpoint) {
+        setOrderItems(checkpoint.items);
+        console.log('[v0] Checkpoint recuperado:', checkpoint);
+      }
+    }
+  }, [currentWorker, selectedTable]);
+  
+  const handleLogin = (workerId: string) => {
+    setCurrentWorker(workerId);
+  };
+  
+  const handleTableSelect = (tableId: string) => {
+    setSelectedTable(tableId);
+  };
+  
+  const addOrderItem = () => {
+    const newItem: OrderItem = {
+      id: Date.now().toString(),
+      name: '',
+      quantity: 1,
+      price: 0,
+      notes: ''
+    };
+    setOrderItems([...orderItems, newItem]);
+  };
+  
+  const updateOrderItem = (id: string, field: keyof OrderItem, value: any) => {
+    setOrderItems(items => 
+      items.map(item => 
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+  };
+  
+  const removeOrderItem = (id: string) => {
+    setOrderItems(items => items.filter(item => item.id !== id));
+  };
+  
+  const loadPendingOrders = () => {
+    const pending = CheckpointManager.getPendingOrders(currentWorker);
+    setPendingOrders(pending);
+    setShowPendingOrders(true);
+  };
+  
+  const takeOverOrder = (originalWorkerId: string, tableId: string) => {
+    CheckpointManager.takeOverOrder(originalWorkerId, tableId, currentWorker);
+    setSelectedTable(tableId);
+    setShowPendingOrders(false);
+    // Recargar la orden
+    const checkpoint = CheckpointManager.getCheckpoint(currentWorker, tableId);
+    if (checkpoint) {
+      setOrderItems(checkpoint.items);
+    }
+  };
+  
+  if (!currentWorker) {
+    return (
+      <div className="min-h-screen bg-orange-50 flex items-center justify-center p-4">
+        <LoginForm onLogin={handleLogin} />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen bg-orange-50 p-4">
+      <div className="max-w-4xl mx-auto">
+        <header className="bg-white rounded-lg shadow-md p-4 mb-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-gray-800">
+              Sistema de Órdenes - Trabajador: {currentWorker}
+            </h1>
+            <div className="space-x-2">
+              <Button onClick={loadPendingOrders} variant="secondary">
+                Ver Órdenes Pendientes
+              </Button>
+              <Button onClick={() => setCurrentWorker('')} variant="danger">
+                Cerrar Sesión
+              </Button>
+            </div>
+          </div>
+        </header>
+        
+        {showPendingOrders && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Órdenes Pendientes de Otros Trabajadores</h2>
+            {pendingOrders.length === 0 ? (
+              <p className="text-gray-600">No hay órdenes pendientes</p>
+            ) : (
+              <div className="space-y-4">
+                {pendingOrders.map((order, index) => (
+                  <div key={index} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold">
+                        Mesa {order.tableId} - Trabajador {order.workerId}
+                      </h3>
+                      <Button 
+                        onClick={() => takeOverOrder(order.workerId, order.tableId)}
+                        size="sm"
+                      >
+                        Continuar Orden
+                      </Button>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {order.items.length} items - {new Date(order.timestamp).toLocaleTimeString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button 
+              onClick={() => setShowPendingOrders(false)} 
+              variant="secondary" 
+              className="mt-4"
+            >
+              Cerrar
+            </Button>
+          </div>
+        )}
+        
+        {/* Resto de la interfaz... */}
+      </div>
+    </div>
+  );
+}
