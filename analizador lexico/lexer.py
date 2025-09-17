@@ -84,7 +84,7 @@ class Token:
     columna: int
 
     def __repr__(self):
-        return f"Token(tipo={self.tipo}, lexema={self.lexema!r}, linea={self.linea}, columna={self.columna})"
+        return f"{self.tipo:<3}, {self.lexema:<12}, ({self.linea}, {self.columna})"
 
 class LexerError(Exception):
     pass
@@ -163,6 +163,8 @@ class Lexer:
                 yield Token(TOK["EOF"], lex, start_line, start_col)
             else:
                 raise LexerError(f"Clase de token no manejada: {kind}")
+        
+        yield Token(TOK["EOF"], "$", linea, col)
 
 def scan(texto: str):
     return list(Lexer(texto).tokens())

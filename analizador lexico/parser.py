@@ -93,3 +93,4 @@ if __name__ == "__main__":
             tokens.append(3)
     print("Tokens:", tokens)
     parse(tokens)
+ # type: ignore
