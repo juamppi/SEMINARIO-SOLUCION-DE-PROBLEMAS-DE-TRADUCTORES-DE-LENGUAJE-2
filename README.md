@@ -17,7 +17,6 @@ El proyecto forma parte del curso **Seminario: Solución de Problemas de Traduct
   Implementación de un **analizador léxico en Python**, que reconoce tokens como identificadores, palabras reservadas, operadores, literales, etc.
 
 ---
-
 ## Uso
 
 ###  Analizador Léxico
@@ -27,3 +26,7 @@ Ejecuta el lexer con:
 ```sh
 cd "analizador lexico"
 python test_lexer.py
+
+<img width="544" height="221" alt="Captura de pantalla 2025-09-16 225444" src="https://github.com/user-attachments/assets/1a996e10-6c14-4adb-bf7f-000fa6b14910" />
+
+
