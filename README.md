@@ -27,6 +27,6 @@ Ejecuta el lexer con:
 cd "analizador lexico"
 python test_lexer.py
 
-<img width="544" height="221" alt="Captura de pantalla 2025-09-16 225444" src="https://github.com/user-attachments/assets/1a996e10-6c14-4adb-bf7f-000fa6b14910" />
+<img width="544" height="221" alt="Captura de pantalla 2025-09-16 225444" src="https://github.com/user-attachments/assets/269093ef-30eb-499c-b9e6-aa796d554731" />
 
 
